@@ -8,7 +8,7 @@ dotenv.config({ path: './.env' })
 const envSchema = z.object({
   PORT: z.string().default('4000'),
   DATABASE_URL: z.string(),
-//   REDIS_URL: z.string(),
+  REDIS_URL: z.string(),
 //   GOOGLE_CLIENT_ID: z.string(),
 
   MAX_EMAILS_PER_HOUR: z.string(),
