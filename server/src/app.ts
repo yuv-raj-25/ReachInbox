@@ -2,7 +2,7 @@ import express, { type Request, type Response, type NextFunction } from 'express
 import cors from 'cors';
 import { ApiError } from './utility/apiError.js';
 import authRoutes from './routes/auth/auth.routes.js';
-
+import emailRoutes from './routes/email/emails.routes.js';
 const app = express();
 
 app.use(cors());
@@ -15,6 +15,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // Mount routes
 app.use('/api/auth', authRoutes);
+app.use('/api/email', emailRoutes)
 
 // Global error handling middleware (must be last)
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
