@@ -2,7 +2,6 @@
 
 A full-stack application for scheduling and managing bulk emails with Google OAuth integration, real-time analytics, and CSV bulk upload capabilities.
 
-![Dashboard Preview](https://placehold.co/800x400?text=ReachInbox+Dashboard)
 
 ## 🚀 Features
 
