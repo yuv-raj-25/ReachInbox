@@ -4,8 +4,6 @@ A production-grade email scheduling and management system inspired by ReachInbox
 The system supports bulk email scheduling, rate-limited delivery, retry-safe background processing, and restart-safe execution using Redis and BullMQ.
 
 
-![Dashboard Preview](https://placehold.co/800x400?text=ReachInbox+Dashboard)
-
 ## 🚀 Features
 
 - **Authentication**: Secure Google Login using OAuth 2.0.
