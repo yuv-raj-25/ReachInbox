@@ -32,7 +32,6 @@ The system supports bulk email scheduling, rate-limited delivery, retry-safe bac
 The system is designed with reliability and scale in mind:
 
 - PostgreSQL acts as the **source of truth** for all emails.
-- Each recipient email is stored as a separate record with status tracking.
 - For every email record, a BullMQ job is created with a calculated delay.
 - Redis persists all queue state, ensuring jobs survive server or worker restarts.
 - A background worker processes jobs, enforces rate limits, and sends emails.
