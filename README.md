@@ -149,24 +149,9 @@ npm run dev
 
 ---
 
-## 📖 Usage Guide
+## 🐳 Infrastructure Setup &  Database & Redis Setup (Docker)
 
-1.  **Login**: Open the frontend URL and sign in using your Google account.
-2.  **Dashboard**: You will see your dashboard with "Scheduled" and "Sent" tabs.
-3.  **Compose Email**:
-    *   Click "Compose Email".
-    *   **To**: Enter manual emails or use **Upload List** to upload a CSV.
-    *   **Body**: Write your email content.
-    *   **Schedule**: Click the Clock icon to pick a time, or click "Send" for immediate delivery.
-4.  **CSV Upload**:
-    *   Click the **Upload Icon (📤)** in the compose header.
-    *   Select a `.csv` file containing email addresses.
-    *   The recipients will be automatically added.
-5.  **View Status**:
-    *   **Scheduled Tab**: Shows emails waiting to be sent (processed by background worker).
-    *   **Sent Tab**: Shows successfully delivered emails.
-
-## 🐳 Infrastructure Setup
+The project uses Docker Compose to run PostgreSQL and Redis locally without manual installation.
 
 The project uses Docker to easily set up the required databases.
 
@@ -190,6 +175,23 @@ To stop the databases:
 ```bash
 docker-compose down
 ```
+
+## 📖 Usage Guide
+
+1.  **Login**: Open the frontend URL and sign in using your Google account.
+2.  **Dashboard**: You will see your dashboard with "Scheduled" and "Sent" tabs.
+3.  **Compose Email**:
+    *   Click "Compose Email".
+    *   **To**: Enter manual emails or use **Upload List** to upload a CSV.
+    *   **Body**: Write your email content.
+    *   **Schedule**: Click the Clock icon to pick a time, or click "Send" for immediate delivery.
+4.  **CSV Upload**:
+    *   Click the **Upload Icon (📤)** in the compose header.
+    *   Select a `.csv` file containing email addresses.
+    *   The recipients will be automatically added.
+5.  **View Status**:
+    *   **Scheduled Tab**: Shows emails waiting to be sent (processed by background worker).
+    *   **Sent Tab**: Shows successfully delivered emails.
 
 ## 👷‍♂️ Email Worker
 
