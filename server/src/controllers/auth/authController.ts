@@ -33,3 +33,12 @@ export const googleAuth = asyncHandler(async (req: Request, res: Response) => {
     new ApiResponse(result, 'Google authentication successful', 200)
   )
 })
+
+export const logout = asyncHandler(async (req: Request & { user?: any }, res: Response) => {
+
+  const userId = req.user?.userId
+  
+  res.status(200).json(
+    new ApiResponse(null, 'Logout successful', 200)
+  )
+}) 
