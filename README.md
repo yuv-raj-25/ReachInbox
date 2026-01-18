@@ -110,9 +110,6 @@ cp .env.example .env
 
 > **Note:** You will need valid `GOOGLE_CLIENT_ID` and `GOOGLE_SECRET_ID` for authentication to work.
 
-**Database Setup:**
-
-Ensure your PostgreSQL database is running. The application connects to `reachinbox` database by default.
 
 **Start the Server:**
 
