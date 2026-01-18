@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Paperclip, Clock, X, Upload, Undo, Redo, Bold, Italic, Underline, AlignLeft, ChevronUp, ChevronDown, List, ListOrdered, Outdent, Indent, Quote, Save, Strikethrough } from "lucide-react";
+import { ArrowLeft, Clock, X, Upload, Undo, Redo, Bold, Italic, Underline, AlignLeft, ChevronUp, ChevronDown, List, ListOrdered, Outdent, Indent, Quote, Save, Strikethrough } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -156,7 +156,7 @@ const ComposeEmail = ({ onBack }: ComposeEmailProps) => {
     };
 
     try {
-      const response = await api.post('/api/emails/bulk-schedule', payload);
+      await api.post('/api/emails/bulk-schedule', payload);
       
       const successMessage = scheduledDate 
         ? `Email scheduled successfully for ${selectedTime.toLocaleString()}`
