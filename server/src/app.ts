@@ -15,7 +15,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // Mount routes
 app.use('/api/auth', authRoutes);
-app.use('/api/email', emailRoutes)
+app.use('/api/emails', emailRoutes)
 
 // Global error handling middleware (must be last)
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
