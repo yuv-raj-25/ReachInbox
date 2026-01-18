@@ -4,7 +4,7 @@ import { asyncHandler } from '../utility/asynHandler.js'
 import { ApiError } from '../utility/apiError.js'
 
 export const requireAuth = asyncHandler(
-  async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
 
     if (!authHeader) {
