@@ -1,7 +1,10 @@
 # ReachInbox Assignment - Email Scheduling & Management System
 
-A full-stack application for scheduling and managing bulk emails with Google OAuth integration, real-time analytics, and CSV bulk upload capabilities.
+A production-grade email scheduling and management system inspired by ReachInbox.  
+The system supports bulk email scheduling, rate-limited delivery, retry-safe background processing, and restart-safe execution using Redis and BullMQ.
 
+
+![Dashboard Preview](https://placehold.co/800x400?text=ReachInbox+Dashboard)
 
 ## 🚀 Features
 
@@ -26,6 +29,49 @@ A full-stack application for scheduling and managing bulk emails with Google OAu
 - **Authentication**: Google OAuth 2.0, JWT.
 
 ---
+## 🧠 System Design Overview
+
+The system is designed with reliability and scale in mind:
+
+- PostgreSQL acts as the **source of truth** for all emails.
+- Each recipient email is stored as a separate record with status tracking.
+- For every email record, a BullMQ job is created with a calculated delay.
+- Redis persists all queue state, ensuring jobs survive server or worker restarts.
+- A background worker processes jobs, enforces rate limits, and sends emails.
+
+This design ensures:
+- No duplicate sends
+- No lost emails
+- Correct behavior across restarts
+
+
+## ⏱️ Rate Limiting Strategy
+
+To mimic real-world email provider constraints, the system enforces rate limits:
+
+- Configurable maximum emails per hour (default: 50/hour)
+- Rate limiting is enforced **at the worker level**, not at API ingestion
+- Redis atomic counters track email sends per sender per hour
+- When the hourly limit is exceeded:
+  - Emails are **not dropped**
+  - Jobs are **rescheduled** to the next available hour
+  - Order is preserved as much as possible
+
+This approach ensures fairness, reliability, and no data loss under load.
+
+## 🔁 Restart Safety
+
+The system is fully restart-safe:
+
+- Redis persists BullMQ job state
+- PostgreSQL persists email status
+- On server or worker restart:
+  - Scheduled emails continue from where they left off
+  - Sent emails are never duplicated
+  - Delayed jobs remain intact
+
+This makes the system safe for real-world deployment scenarios.
+
 
 ## 🏃‍♂️ Getting Started
 
@@ -126,10 +172,69 @@ npm run dev
     *   **Scheduled Tab**: Shows emails waiting to be sent (processed by background worker).
     *   **Sent Tab**: Shows successfully delivered emails.
 
-## ⚙️ Architecture
+## 🐳 Infrastructure Setup
 
-- **Email Worker**: A background worker (`email.worker.ts`) runs alongside the server to process the email queue. It handles rate limiting and moves emails from `scheduled` to `sent` status.
-- **Rate Limiting**: Configured to 50 emails/hour (configurable in `.env`) to prevent spamming.
+The project uses Docker to easily set up the required databases.
+
+**1. Install Docker**
+Make sure you have Docker and Docker Compose installed on your machine.
+
+**2. Start Services**
+Navigate to the server directory and run:
+
+```bash
+cd server
+docker-compose up -d
+```
+
+This will start:
+- **PostgreSQL** on port `5431` (User/Pass: `reachinbox`/`reachinbox`)
+- **Redis** on port `6379`
+
+**3. Stop Services**
+To stop the databases:
+```bash
+docker-compose down
+```
+
+## 👷‍♂️ Email Worker
+
+The email worker handles the background processing of scheduled emails.
+
+
+
+### Running the Worker
+**Option A: Automatic (Recommended)**
+The worker is integrated into the main server. Simply running `npm run dev` in the server directory starts both the API server and the Email Worker.
+
+**Option B: Standalone**
+If you wish to run the worker independently (e.g., for scaling):
+1.  Open a new terminal.
+2.  Navigate to `server`.
+3.  Run:
+    ```bash
+    npm run worker
+    ```
+
+## ⚖️ Trade-offs & Assumptions
+
+- Pagination is not implemented for email lists (kept simple for MVP).
+- Rate limiting is global per sender (multi-tenant logic can be added).
+- CSV parsing is handled on the frontend for simplicity and performance.
+- Email content supports basic HTML but no template editor is included.
+- UI prioritizes clarity over advanced styling.
+
+These choices were made to focus on correctness, reliability, and core scheduling logic.
+
+
+## 🔌 Key API Endpoints
+
+| Method | Endpoint | Description |
+|------|--------|------------|
+| POST | /api/auth/google | Google OAuth login |
+| POST | /api/emails/bulk-schedule | Schedule bulk emails |
+| GET | /api/emails/scheduled | Fetch scheduled emails |
+| GET | /api/emails/sent | Fetch sent emails |
 
 ## 🧪 Development
 
