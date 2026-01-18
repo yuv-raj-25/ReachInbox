@@ -1,11 +1,39 @@
 import { ArrowLeft, Star, Archive, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
+interface Email {
+  id: string;
+  sender_email: string;
+  recipient_email: string;
+  subject: string;
+  body: string;
+  scheduled_at: string;
+  sent_at?: string;
+  status: string;
+  created_at: string;
+}
+
 interface EmailDetailProps {
+  email: Email;
   onBack: () => void;
 }
 
-const EmailDetail = ({ onBack }: EmailDetailProps) => {
+const EmailDetail = ({ email, onBack }: EmailDetailProps) => {
+  const getInitials = (email: string) => {
+    return email.substring(0, 2).toUpperCase();
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full bg-background">
       {/* Header */}
@@ -15,7 +43,7 @@ const EmailDetail = ({ onBack }: EmailDetailProps) => {
             <ArrowLeft className="h-5 w-5" />
           </button>
           <h1 className="text-lg font-medium text-foreground">
-            Oliver, hello there! | MJWYT44 BM#52W01
+            {email.subject}
           </h1>
         </div>
         <div className="flex items-center gap-4">
@@ -29,7 +57,7 @@ const EmailDetail = ({ onBack }: EmailDetailProps) => {
             <Trash2 className="h-5 w-5" />
           </button>
           <Avatar className="h-8 w-8 ml-2">
-            <AvatarFallback className="bg-muted text-muted-foreground text-sm">OB</AvatarFallback>
+            <AvatarFallback className="bg-muted text-muted-foreground text-sm">{getInitials(email.recipient_email)}</AvatarFallback>
           </Avatar>
         </div>
       </div>
@@ -40,60 +68,25 @@ const EmailDetail = ({ onBack }: EmailDetailProps) => {
           {/* Sender Info */}
           <div className="flex items-start gap-4 mb-8">
             <Avatar className="h-10 w-10">
-              <AvatarFallback className="bg-teal-avatar text-white font-medium">A</AvatarFallback>
+              <AvatarFallback className="bg-teal-avatar text-white font-medium">{getInitials(email.sender_email)}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-medium text-foreground">Amanda Clark</span>
-                  <span className="text-muted-foreground ml-2">&lt;sender@example.com&gt;</span>
+                  <span className="font-medium text-foreground">From: </span>
+                  <span className="text-muted-foreground">&lt;{email.sender_email}&gt;</span>
                 </div>
-                <span className="text-sm text-muted-foreground">Nov 3, 10:23 AM</span>
+                <span className="text-sm text-muted-foreground">
+                  {formatDate(email.status === 'sent' && email.sent_at ? email.sent_at : email.scheduled_at)}
+                </span>
               </div>
-              <p className="text-sm text-muted-foreground mt-0.5">to me ∨</p>
+              <p className="text-sm text-muted-foreground mt-0.5">to {email.recipient_email}</p>
             </div>
           </div>
 
           {/* Email Body */}
-          <div className="space-y-6 text-foreground">
-            <p>Hey Oliver,</p>
-            
-            <p>You've just RECEIVED something</p>
-            
-            <div className="border-2 border-dashed border-blue-dashed rounded-lg p-4 bg-blue-50">
-              <p className="text-foreground">
-                ⚡ <strong className="text-primary">Extremely Exclusive—Only 4 Spots Worldwide Per Year | $25,000 investment</strong> ⚡
-              </p>
-              <p className="text-foreground mt-2">
-                ⚡ To explore securing your private transformation, simply reply right now with "<strong>FLY OUT FIX</strong>" .
-              </p>
-            </div>
-
-            <p>Your coach for world-class performance,</p>
-            
-            <p>Grant</p>
-
-            <p className="italic text-muted-foreground">P.S. Always remember that you can develop world class technique! 🚀</p>
-          </div>
-
-          {/* Attachments */}
-          <div className="mt-8 flex gap-4">
-            <div className="rounded-lg overflow-hidden border border-border">
-              <div className="w-40 h-28 bg-blue-100 relative">
-              </div>
-              <div className="p-2 bg-card">
-                <p className="text-xs font-medium text-foreground truncate">Tennis_Coach_Profile.png</p>
-                <p className="text-xs text-muted-foreground">1.2 MB</p>
-              </div>
-            </div>
-            <div className="rounded-lg overflow-hidden border border-border">
-              <div className="w-40 h-28 bg-blue-100 relative">
-              </div>
-              <div className="p-2 bg-card">
-                <p className="text-xs font-medium text-foreground truncate">Tennis_Coach_Profile2.png</p>
-                <p className="text-xs text-muted-foreground">1.2 MB</p>
-              </div>
-            </div>
+          <div className="space-y-4 text-foreground whitespace-pre-wrap">
+            {email.body}
           </div>
         </div>
       </div>
