@@ -27,7 +27,7 @@ export async function registerEmailUser(
     `
     INSERT INTO users (email, password_hash, name, provider)
     VALUES ($1,$2,$3,'email')
-    RETURNING id, email, name
+    RETURNING id, email, name, avatar_url, created_at, provider
     `,
     [email, hash, name]
   )
@@ -42,21 +42,29 @@ export async function loginEmailUser(
   email: string,
   password: string
 ) {
+  // First, get the user with password_hash for verification
   const { rows } = await db.query(
-    `SELECT * FROM users WHERE email=$1`,
+    `SELECT id, email, password_hash FROM users WHERE email=$1`,
     [email]
   )
 
-  const user = rows[0]
-  if (!user || !user.password_hash) {
+  const userAuth = rows[0]
+  if (!userAuth || !userAuth.password_hash) {
     throw ApiError.unauthorized('Invalid email or password')
   }
 
-  const match = await bcrypt.compare(password, user.password_hash)
+  const match = await bcrypt.compare(password, userAuth.password_hash)
   if (!match) {
     throw ApiError.unauthorized('Invalid email or password')
   }
 
+  // Get user data WITHOUT password_hash for response
+  const safeUser = await db.query(
+    `SELECT id, email, name, avatar_url, provider, created_at FROM users WHERE id=$1`,
+    [userAuth.id]
+  )
+
+  const user = safeUser.rows[0]
   const token = signToken({ userId: user.id, email: user.email })
 
   return { user, token }
@@ -80,8 +88,9 @@ export async function loginWithGoogle(idToken: string) {
 
   const { email, name, picture } = payload
 
+  // Check if user exists (only select safe fields)
   let userRes = await db.query(
-    `SELECT * FROM users WHERE email=$1`,
+    `SELECT id, email, name, avatar_url, provider, created_at FROM users WHERE email=$1`,
     [email]
   )
 
@@ -92,7 +101,7 @@ export async function loginWithGoogle(idToken: string) {
       `
       INSERT INTO users (email, name, avatar_url, provider)
       VALUES ($1,$2,$3,'google')
-      RETURNING *
+      RETURNING id, email, name, avatar_url, provider, created_at
       `,
       [email, name, picture]
     )
